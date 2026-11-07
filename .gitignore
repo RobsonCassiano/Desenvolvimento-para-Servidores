@@ -1,0 +1,11 @@
+target/
+bin/
+.vscode/
+.idea/
+*.class
+*.iml
+
+imagens/usuarios/*
+imagens/produtos/*
+!imagens/usuarios/.gitkeep
+!imagens/produtos/.gitkeep

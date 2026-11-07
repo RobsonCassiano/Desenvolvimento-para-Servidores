@@ -1,36 +1,118 @@
-# Sistema de Loja Virtual
+# Sistema de Loja Virtual - P2 - Tela de Login e Banco de Dados
 
-Projeto Java para demonstrar os fundamentos de Programacao Orientada a Objetos:
+Aplicação desktop Java Swing para gerenciamento de usuários e estoque de produtos. O projeto também demonstra conceitos de Programação Orientada a Objetos:
 
-- classe e atributos privados;
-- construtores e sobrecarga de construtor;
-- encapsulamento com getters e setters;
-- heranca com `Eletronico extends Produto`;
-- reescrita de `calcularPrecoFinal()`;
-- sobrecarga de `calcularFrete()`.
+- encapsulamento com atributos privados, construtores, getters e setters;
+- herança com `Eletronico extends Produto`;
+- sobrescrita de `calcularPrecoFinal()`;
+- sobrecarga de `calcularFrete()`;
+- persistência em MySQL via JDBC.
 
-## Estrutura
+## Requisitos
+
+- JDK 17 ou superior;
+- Maven 3.8 ou superior;
+- XAMPP com MySQL/MariaDB iniciado (ou outro servidor MySQL compatível).
+
+## Configuração do banco de dados com XAMPP
+
+### 1. Iniciar o servidor
+
+1. Abra o **XAMPP Control Panel**.
+2. Inicie o módulo **MySQL**. O Apache só é necessário se for usar o phpMyAdmin.
+3. Confirme que o MySQL está ouvindo na porta `3306`, que é a porta usada pela configuração padrão da aplicação.
+
+### 2. Criar o banco e as tabelas
+
+Para uma instalação nova:
+
+1. Abra o phpMyAdmin em `http://localhost/phpmyadmin` ou conecte-se ao MySQL por outro cliente.
+2. Importe ou execute o arquivo `src/main/resources/db/schema.sql`.
+3. O script cria o banco `bd_login` e as tabelas `usuario` e `produto`.
+
+Se estiver atualizando um banco da versão antiga:
+
+1. Faça um backup do banco antes de alterar sua estrutura.
+2. Execute `src/main/resources/db/migration-from-legacy.sql` uma única vez.
+3. O script adiciona a coluna `foto` à tabela `usuario`. Se ela já existir, remova ou comente a instrução `ALTER TABLE usuario ADD COLUMN foto ...` antes de executar.
+4. A migração altera a comparação do nome de usuário para ser sensível a maiúsculas e minúsculas e cria a tabela `produto`, caso ainda não exista.
+
+### 3. Configurar a conexão JDBC
+
+A aplicação usa `jdbc:mysql://127.0.0.1:3306/bd_login`. Os valores padrão são:
+
+| Configuração | Valor padrão |
+|---|---|
+| URL JDBC | `jdbc:mysql://127.0.0.1:3306/bd_login` |
+| Usuário | `root` |
+| Senha | vazia |
+
+Se o MySQL do seu XAMPP usar outra porta, banco, usuário ou senha, configure as variáveis de ambiente `DB_URL`, `DB_USER` e `DB_PASSWORD`. No PowerShell:
+
+```powershell
+$env:DB_URL = "jdbc:mysql://127.0.0.1:3306/bd_login"
+$env:DB_USER = "root"
+$env:DB_PASSWORD = "sua-senha"
+mvn exec:java
+```
+
+As variáveis definidas dessa forma valem para a janela atual do PowerShell. Alternativamente, é possível passar propriedades da JVM, por exemplo:
+
+```powershell
+mvn exec:java "-Ddb.url=jdbc:mysql://127.0.0.1:3306/bd_login" "-Ddb.user=root" "-Ddb.password=sua-senha"
+```
+
+As propriedades da JVM têm precedência sobre as variáveis de ambiente. Não grave credenciais reais no código-fonte nem as envie ao repositório.
+
+### Imagens e backup dos dados
+
+As imagens selecionadas não são armazenadas dentro do MySQL. Os arquivos ficam em `imagens/usuarios` ou `imagens/produtos`, e o banco guarda o caminho relativo correspondente. Para preservar os dados ao transferir ou restaurar o projeto, faça backup tanto do banco `bd_login` quanto da pasta `imagens`.
+
+## Compilar, testar e executar
+
+Execute os comandos na raiz do projeto:
+
+```bash
+mvn clean test
+mvn exec:java
+```
+
+Para testar a conexão com o MySQL sem abrir a aplicação:
+
+```bash
+mvn exec:java "-Dexec.mainClass=com.lojavirtual.app.TestaConexao"
+```
+
+Para executar a demonstração de POO no console:
+
+```bash
+mvn exec:java "-Dexec.mainClass=com.lojavirtual.demo.DemoPoo"
+```
+
+## Estrutura do projeto
 
 ```text
-src/
-└── main/
-    └── java/
-        └── com/lojavirtual/
-            ├── Eletronico.java
-            ├── Main.java
-            └── Produto.java
-```
-
-## Executar com Maven
-
-```bash
-mvn compile
-mvn exec:java -Dexec.mainClass=com.lojavirtual.Main
-```
-
-## Executar sem Maven
-
-```bash
-javac -d target/classes src/main/java/com/lojavirtual/*.java
-java -cp target/classes com.lojavirtual.Main
+.
+├── imagens/
+│   ├── produtos/                 # Imagens dos produtos (geradas/selecionadas em execução)
+│   └── usuarios/                 # Fotos dos usuários (geradas/selecionadas em execução)
+├── src/
+│   ├── main/
+│   │   ├── java/com/lojavirtual/
+│   │   │   ├── app/              # Entrada da aplicação e teste de conexão
+│   │   │   ├── data/             # Conexão JDBC
+│   │   │   ├── demo/             # Demonstração de conceitos de POO
+│   │   │   ├── model/            # Entidades e regras de domínio
+│   │   │   ├── repository/       # DAOs e operações SQL
+│   │   │   ├── session/          # Estado da sessão do usuário
+│   │   │   ├── ui/               # Telas Swing
+│   │   │   └── util/             # Validação, tarefas Swing e imagens
+│   │   └── resources/db/
+│   │       ├── schema.sql                 # Criação do banco e tabelas
+│   │       └── migration-from-legacy.sql  # Migração de banco existente
+│   └── test/java/com/lojavirtual/
+│       └── model/                # Testes automatizados do domínio
+├── .gitignore
+├── pom.xml                       # Dependências e configuração Maven
+└── README.md
 ```
