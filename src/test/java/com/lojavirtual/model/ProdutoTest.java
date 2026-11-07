@@ -23,6 +23,20 @@ class ProdutoTest {
     }
 
     @Test
+    void cobraDezReaisPorMesDeGarantiaAposAplicarDesconto() {
+        Produto produto = new Eletronico("Smartphone", new BigDecimal("2200.00"),
+                new BigDecimal("15"), 12);
+
+        assertEquals(new BigDecimal("1990.00"), produto.calcularPrecoFinal());
+    }
+
+    @Test
+    void rejeitaMesesDeGarantiaNegativos() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new Eletronico("Notebook", new BigDecimal("3500.00"), -1));
+    }
+
+    @Test
     void rejeitaDescontoForaDoIntervaloPermitido() {
         assertThrows(IllegalArgumentException.class,
                 () -> new Produto("Mochila", new BigDecimal("150.00"), new BigDecimal("101")));
