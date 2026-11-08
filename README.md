@@ -8,6 +8,18 @@ Aplicação desktop Java Swing para gerenciamento de usuários e estoque de prod
 - sobrecarga de `calcularFrete()`;
 - persistência em MySQL via JDBC.
 
+## Regras e demonstração de POO
+
+O preço final de um eletrônico é calculado aplicando primeiro o desconto ao preço base e, em seguida, somando R$ 10,00 por mês de garantia:
+
+```text
+preço final = preço base × (1 − desconto / 100) + meses de garantia × R$ 10,00
+```
+
+Por exemplo, um smartphone de R$ 2.200,00 com 15% de desconto e 12 meses de garantia custa R$ 1.990,00: R$ 1.870,00 após o desconto, mais R$ 120,00 da garantia. A garantia pode ser de zero meses, mas não pode ser negativa.
+
+A classe `DemoPoo` também demonstra a alteração de atributos por setters (nome, preço, desconto, estoque e meses de garantia) e o tratamento de dados inválidos. Os setters rejeitam valores fora das regras do domínio, como desconto acima de 100% ou garantia negativa, lançando `IllegalArgumentException`; a demonstração captura a exceção e continua executando.
+
 ## Requisitos
 
 - JDK 17 ou superior;

@@ -24,5 +24,34 @@ public class DemoPoo {
                 livro.calcularFrete(new BigDecimal("20")));
         System.out.printf("Frete express: R$ %s%n",
                 livro.calcularFrete(new BigDecimal("20"), true));
+
+        System.out.println("\nAlteracao de atributos:");
+        System.out.printf("%s - preco antes da alteracao: R$ %s%n",
+                mochila.getNome(), mochila.calcularPrecoFinal());
+        mochila.setNome("Mochila executiva");
+        mochila.setPrecoBase(new BigDecimal("180.00"));
+        mochila.setDesconto(new BigDecimal("20"));
+        mochila.setQuantidade(8);
+        System.out.printf("%s - preco depois da alteracao: R$ %s; estoque: %d%n",
+                mochila.getNome(), mochila.calcularPrecoFinal(), mochila.getQuantidade());
+
+        System.out.printf("%s - garantia antes da alteracao: %d meses; preco: R$ %s%n",
+                notebook.getNome(), notebook.getMesesGarantia(), notebook.calcularPrecoFinal());
+        notebook.setMesesGarantia(12);
+        System.out.printf("%s - garantia depois da alteracao: %d meses; preco: R$ %s%n",
+                notebook.getNome(), notebook.getMesesGarantia(), notebook.calcularPrecoFinal());
+
+        System.out.println("\nTratamento de dados invalidos:");
+        try {
+            mochila.setDesconto(new BigDecimal("101"));
+        } catch (IllegalArgumentException e) {
+            System.out.printf("Desconto rejeitado: %s%n", e.getMessage());
+        }
+
+        try {
+            notebook.setMesesGarantia(-1);
+        } catch (IllegalArgumentException e) {
+            System.out.printf("Garantia rejeitada: %s%n", e.getMessage());
+        }
     }
 }
